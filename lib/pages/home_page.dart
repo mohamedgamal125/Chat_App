@@ -36,7 +36,7 @@ class _HomePageState extends State<HomePage> {
           BottomNavigationBarItem(
               icon: Icon(Icons.chat_bubble_outline_sharp), label: "Chats"),
           BottomNavigationBarItem(
-              icon: Icon(Icons.supervised_user_circle_sharp), label: "Chats"),
+              icon: Icon(Icons.supervised_user_circle_sharp), label: "Users"),
         ],
       ),
     );
