@@ -7,9 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:get_it/get_it.dart';
 
+import '../Services/navigation_service.dart';
 import '../provider/authentication_provider.dart';
 import '../widgets/custom_list_view_tiles.dart';
 import '../widgets/top_bar.dart';
+import '../pages/chat_page.dart';
 
 class ChatsPage extends StatefulWidget {
   @override
@@ -22,12 +24,21 @@ class _ChatsPageState extends State<ChatsPage> {
 
   late AuthenticationProvider _auth;
   late ChatsPageProvider _pageProvider;
+  late NavigationService _navigation;
+
 
   @override
   Widget build(BuildContext context) {
-    _deviceHeight = MediaQuery.of(context).size.height;
-    _deviceWidth = MediaQuery.of(context).size.width;
+    _deviceHeight = MediaQuery
+        .of(context)
+        .size
+        .height;
+    _deviceWidth = MediaQuery
+        .of(context)
+        .size
+        .width;
     _auth = Provider.of<AuthenticationProvider>(context);
+    _navigation = GetIt.instance.get<NavigationService>();
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<ChatsPageProvider>(
@@ -108,7 +119,6 @@ class _ChatsPageState extends State<ChatsPage> {
       _subTitleText = _chat.messages.first.type != MessageType.TEXT
           ? "Media Attachment"
           : _chat.messages.first.content;
-
     }
     return CustomListViewTileWithActivity(
       height: _deviceHeight * 0.10,
@@ -117,7 +127,12 @@ class _ChatsPageState extends State<ChatsPage> {
       imagePath: _chat.imageURL(),
       isActive: _isActive,
       isActivity: _chat.activity,
-      onTap: () {},
+      onTap: () {
+        _navigation.navigateToPage(
+            ChatPage(chat: _chat,)
+
+        );
+      },
     );
   }
 }
