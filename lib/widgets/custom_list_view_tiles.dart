@@ -1,3 +1,4 @@
+import 'package:chat_app/widgets/message_bubbles.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -101,10 +102,16 @@ class CustomChatListViewTile extends StatelessWidget {
               : Container(),
           SizedBox(width: width * 0.05),
           message.type == MessageType.TEXT
-              ? Text(message.content)
-              : Text(message.content)
-
-
+              ? TextMessageBubble(
+                  isOwnMessage: isOwnMessage,
+                  message: message,
+                  height: deviceHeight * 0.06,
+                  width: width)
+              : ImageMessageBubble(
+                  isOwnMessage: isOwnMessage,
+                  message: message,
+                  height: deviceHeight * 0.3,
+                  width: width * 0.55),
         ],
       ),
     );
