@@ -29,6 +29,7 @@ class _ChatPageState extends State<ChatPage> {
   late GlobalKey<FormState> _messageFormState;
   late ScrollController _messageListViewController;
 
+  final FocusNode _focusNode = FocusNode();
   @override
   void initState() {
     super.initState();
@@ -88,6 +89,7 @@ class _ChatPageState extends State<ChatPage> {
                   ),
                 ),
                 _messagesListView(),
+                _sendMessageForm(),
               ],
             ),
           ),
@@ -108,18 +110,17 @@ class _ChatPageState extends State<ChatPage> {
                 bool _isOwnMessge = _message.senderID == _auth.user.uid;
                 return Container(
                     child: CustomChatListViewTile(
-                        width: _deviceWidth * 0.80,
-                        deviceHeight: _deviceHeight,
-                        isOwnMessage: _isOwnMessge,
-                        message: _message,
-                        sender: this
-                            .widget
-                            .chat
-                            .members
-                            .where((_m) => _m.uid == _message.senderID)
-                            .first,
-                    )
-                );
+                  width: _deviceWidth * 0.80,
+                  deviceHeight: _deviceHeight,
+                  isOwnMessage: _isOwnMessge,
+                  message: _message,
+                  sender: this
+                      .widget
+                      .chat
+                      .members
+                      .where((_m) => _m.uid == _message.senderID)
+                      .first,
+                ));
               }),
         );
       } else {
@@ -138,5 +139,114 @@ class _ChatPageState extends State<ChatPage> {
         ),
       );
     }
+  }
+
+  Widget _sendMessageForm() {
+    return Container(
+      height: _deviceHeight * 0.06,
+      decoration: BoxDecoration(
+        color: Color.fromRGBO(30, 29, 37, 1.0),
+        borderRadius: BorderRadius.circular(100),
+      ),
+      margin: EdgeInsets.symmetric(
+          horizontal: _deviceWidth * 0.04, vertical: _deviceHeight * 0.03),
+      child: Form(
+        key: _messageFormState,
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            _messageTextField(),
+            _sentMessageButton(),
+            _imageMessageButton(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _messageTextField() {
+    return SizedBox(
+      width: _deviceWidth * 0.60,
+      // child: CustomTextFormField1(
+      //   onSaved: (_value) {
+      //     _pageProvider.message=_value;
+      //   },
+      //   regEX: r'^(?!\s*$).+',
+      //   hintText: "Type a message",
+      //   obscureText: false,
+      //   fonsSize: 14,
+      // ),
+
+      child: TextFormField(
+        focusNode: _focusNode,
+        onSaved: (_value) {
+          _pageProvider.message = _value!;
+        },
+        cursorColor: Colors.white,
+        style: TextStyle(
+          color: Colors.white,
+        ),
+        obscureText: false,
+        validator: (value) {
+          return RegExp(r'^(?!\s*$).+').hasMatch(value!)
+              ? null
+              : 'Enter Valid value';
+        },
+        decoration: InputDecoration(
+            fillColor: Color.fromRGBO(30, 29, 37, 1.0),
+            filled: true,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10.0),
+              borderSide: BorderSide.none,
+            ),
+            hintText: "Type a message",
+            hintStyle: TextStyle(
+              color: Colors.white54,
+              fontSize: 14,
+            )),
+      ),
+    );
+  }
+
+  Widget _sentMessageButton() {
+    double _size = _deviceHeight * 0.05;
+
+    return Container(
+      width: _size,
+      height: _size,
+      child: IconButton(
+        onPressed: () {
+          if (_messageFormState.currentState!.validate()) {
+            _messageFormState.currentState!.save();
+            _pageProvider.sendTextMessage();
+            _focusNode.unfocus();
+            _messageFormState.currentState!.reset();
+          }
+        },
+        icon: Icon(
+          Icons.send,
+          color: Colors.white,
+        ),
+      ),
+    );
+  }
+
+  Widget _imageMessageButton() {
+    double _size = _deviceHeight * 0.04;
+
+    return Container(
+      height: _size,
+      width: _size,
+      child: FloatingActionButton(
+        onPressed: () {},
+        backgroundColor: Color.fromRGBO(0, 82, 218, 1.0),
+        child: Icon(
+          Icons.camera_enhance,
+          color: Colors.white,
+        ),
+      ),
+    );
   }
 }

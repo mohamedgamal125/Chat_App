@@ -26,8 +26,12 @@ class ChatPageProvider extends ChangeNotifier {
   late StreamSubscription _messageStream;
   String? _message;
 
-  String? get message {
-    return _message;
+  String get message {
+    return message;
+  }
+
+  void set message(String _value) {
+    _message = _value;
   }
 
   ChatPageProvider(this._chatId, this._auth, this._messagesListViewController) {
@@ -74,7 +78,10 @@ class ChatPageProvider extends ChangeNotifier {
           sentTime: DateTime.now());
 
       _db.addMessageToChat(_chatId, _messageToSent);
+      print("===================================================");
+      print('The Message was sent');
     }
+
   }
 
   void sendImageMessage() async {

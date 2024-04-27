@@ -83,6 +83,7 @@ class DatabaseService {
           .collection(MESSAGES_COOLECTION)
           .add(_message.toJson());
     } catch (e) {
+      print('=======================sentError=======');
       print(e);
     }
   }
