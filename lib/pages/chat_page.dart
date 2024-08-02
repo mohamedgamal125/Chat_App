@@ -78,14 +78,18 @@ class _ChatPageState extends State<ChatPage> {
                       Icons.delete,
                       color: Color.fromRGBO(0, 82, 218, 1.0),
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      _pageProvider.deleteChat();
+                    },
                   ),
                   secondAction: IconButton(
                     icon: Icon(
                       Icons.arrow_back,
                       color: Color.fromRGBO(0, 82, 218, 1.0),
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      _pageProvider.goBack();
+                    },
                   ),
                 ),
                 _messagesListView(),
@@ -104,6 +108,7 @@ class _ChatPageState extends State<ChatPage> {
         return Container(
           height: _deviceHeight * 0.74,
           child: ListView.builder(
+            controller: _messageListViewController,
               itemCount: _pageProvider.messages!.length,
               itemBuilder: (BuildContext _context, int _index) {
                 ChatMessage _message = _pageProvider.messages![_index];
@@ -180,6 +185,8 @@ class _ChatPageState extends State<ChatPage> {
       // ),
 
       child: TextFormField(
+        keyboardType: TextInputType.multiline,
+
         focusNode: _focusNode,
         onSaved: (_value) {
           _pageProvider.message = _value!;
@@ -240,7 +247,10 @@ class _ChatPageState extends State<ChatPage> {
       height: _size,
       width: _size,
       child: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+
+          _pageProvider.sendImageMessage();
+        },
         backgroundColor: Color.fromRGBO(0, 82, 218, 1.0),
         child: Icon(
           Icons.camera_enhance,

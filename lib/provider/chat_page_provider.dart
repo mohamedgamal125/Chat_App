@@ -6,6 +6,7 @@ import 'package:chat_app/Services/navigation_service.dart';
 import 'package:chat_app/provider/authentication_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get_it/get_it.dart';
 
 import '../models/chat_message.dart';
@@ -24,6 +25,8 @@ class ChatPageProvider extends ChangeNotifier {
   List<ChatMessage>? messages;
 
   late StreamSubscription _messageStream;
+  late StreamSubscription _keyboardVisibilityStream;
+  late KeyboardVisibilityController _keyboardVisibilityController;
   String? _message;
 
   String get message {
@@ -39,7 +42,9 @@ class ChatPageProvider extends ChangeNotifier {
     _storage = GetIt.instance.get<CloudStorageService>();
     _media = GetIt.instance.get<MediaService>();
     _navigation = GetIt.instance.get<NavigationService>();
+    _keyboardVisibilityController = KeyboardVisibilityController();
     listenToMessages();
+    listenToKeyboardChanges();
   }
 
   @override
@@ -60,6 +65,12 @@ class ChatPageProvider extends ChangeNotifier {
         ).toList();
         messages = _messages;
         notifyListeners();
+        WidgetsBinding.instance!.addPostFrameCallback((_) {
+          if (_messagesListViewController.hasClients) {
+            _messagesListViewController
+                .jumpTo(_messagesListViewController.position.maxScrollExtent);
+          }
+        });
 
         // add Scroll to bottom call;
       });
@@ -67,6 +78,13 @@ class ChatPageProvider extends ChangeNotifier {
       print("error Getting messages ");
       print(e);
     }
+  }
+
+  void listenToKeyboardChanges() {
+    _keyboardVisibilityStream =
+        _keyboardVisibilityController.onChange.listen((_event) {
+      _db.updateChatDate(_chatId, {"is_activity": _event});
+    });
   }
 
   void sendTextMessage() {
@@ -81,7 +99,6 @@ class ChatPageProvider extends ChangeNotifier {
       print("===================================================");
       print('The Message was sent');
     }
-
   }
 
   void sendImageMessage() async {
@@ -95,10 +112,8 @@ class ChatPageProvider extends ChangeNotifier {
             content: _downloadURL!,
             type: MessageType.IMAGE,
             senderID: _auth.user.uid,
-            sentTime: DateTime.now()
-        );
+            sentTime: DateTime.now());
         _db.addMessageToChat(_chatId, _messageToSent);
-
       }
     } catch (e) {
       print(e);
