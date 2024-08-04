@@ -24,6 +24,8 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildUi() {
     return Scaffold(
+
+      backgroundColor: Colors.black,
       body: _pages[_currentPage],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentPage,

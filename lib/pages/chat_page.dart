@@ -1,13 +1,11 @@
 import 'package:chat_app/provider/chat_page_provider.dart';
 import 'package:flutter/material.dart';
-
 import 'package:provider/provider.dart';
 import '../widgets/top_bar.dart';
 import '../widgets/custom_list_view_tiles.dart';
 import '../widgets/custom_input_fields.dart';
 import '../models/chat_message.dart';
 import '../models/chat.dart';
-
 import '../provider/chats_page_provider.dart';
 import '../provider/authentication_provider.dart';
 
@@ -30,6 +28,7 @@ class _ChatPageState extends State<ChatPage> {
   late ScrollController _messageListViewController;
 
   final FocusNode _focusNode = FocusNode();
+
   @override
   void initState() {
     super.initState();
@@ -58,45 +57,59 @@ class _ChatPageState extends State<ChatPage> {
     return Builder(builder: (BuildContext _context) {
       _pageProvider = _context.watch<ChatPageProvider>();
       return Scaffold(
-        body: SingleChildScrollView(
-          child: Container(
-            padding: EdgeInsets.symmetric(
-                horizontal: _deviceWidth * 0.03,
-                vertical: _deviceHeight * 0.02),
-            height: _deviceHeight,
-            width: _deviceWidth * 0.97,
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                TopBar(
-                  fontSize: 12,
-                  this.widget.chat.title(),
-                  primaryAction: IconButton(
-                    icon: Icon(
-                      Icons.delete,
-                      color: Color.fromRGBO(0, 82, 218, 1.0),
-                    ),
-                    onPressed: () {
-                      _pageProvider.deleteChat();
-                    },
-                  ),
-                  secondAction: IconButton(
-                    icon: Icon(
-                      Icons.arrow_back,
-                      color: Color.fromRGBO(0, 82, 218, 1.0),
-                    ),
-                    onPressed: () {
-                      _pageProvider.goBack();
-                    },
-                  ),
+        body: Stack(
+          children: [
+            Container(
+              height: _deviceHeight,
+              width: _deviceWidth,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/images/background.png'),
+                  fit: BoxFit.cover,
                 ),
-                _messagesListView(),
-                _sendMessageForm(),
-              ],
+              ),
             ),
-          ),
+            SingleChildScrollView(
+              child: Container(
+                padding: EdgeInsets.symmetric(
+                    horizontal: _deviceWidth * 0.03,
+                    vertical: _deviceHeight * 0.02),
+                height: _deviceHeight,
+                width: _deviceWidth * 0.97,
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    TopBar(
+                      fontSize: 12,
+                      this.widget.chat.title(),
+                      primaryAction: IconButton(
+                        icon: Icon(
+                          Icons.delete,
+                          color: Color.fromRGBO(0, 82, 218, 1.0),
+                        ),
+                        onPressed: () {
+                          _pageProvider.deleteChat();
+                        },
+                      ),
+                      secondAction: IconButton(
+                        icon: Icon(
+                          Icons.arrow_back,
+                          color: Color.fromRGBO(0, 82, 218, 1.0),
+                        ),
+                        onPressed: () {
+                          _pageProvider.goBack();
+                        },
+                      ),
+                    ),
+                    _messagesListView(),
+                    _sendMessageForm(),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       );
     });
@@ -109,12 +122,12 @@ class _ChatPageState extends State<ChatPage> {
           height: _deviceHeight * 0.74,
           child: ListView.builder(
             controller: _messageListViewController,
-              itemCount: _pageProvider.messages!.length,
-              itemBuilder: (BuildContext _context, int _index) {
-                ChatMessage _message = _pageProvider.messages![_index];
-                bool _isOwnMessge = _message.senderID == _auth.user.uid;
-                return Container(
-                    child: CustomChatListViewTile(
+            itemCount: _pageProvider.messages!.length,
+            itemBuilder: (BuildContext _context, int _index) {
+              ChatMessage _message = _pageProvider.messages![_index];
+              bool _isOwnMessge = _message.senderID == _auth.user.uid;
+              return Container(
+                child: CustomChatListViewTile(
                   width: _deviceWidth * 0.80,
                   deviceHeight: _deviceHeight,
                   isOwnMessage: _isOwnMessge,
@@ -125,8 +138,10 @@ class _ChatPageState extends State<ChatPage> {
                       .members
                       .where((_m) => _m.uid == _message.senderID)
                       .first,
-                ));
-              }),
+                ),
+              );
+            },
+          ),
         );
       } else {
         return Align(
@@ -174,19 +189,8 @@ class _ChatPageState extends State<ChatPage> {
   Widget _messageTextField() {
     return SizedBox(
       width: _deviceWidth * 0.60,
-      // child: CustomTextFormField1(
-      //   onSaved: (_value) {
-      //     _pageProvider.message=_value;
-      //   },
-      //   regEX: r'^(?!\s*$).+',
-      //   hintText: "Type a message",
-      //   obscureText: false,
-      //   fonsSize: 14,
-      // ),
-
       child: TextFormField(
         keyboardType: TextInputType.multiline,
-
         focusNode: _focusNode,
         onSaved: (_value) {
           _pageProvider.message = _value!;
@@ -202,17 +206,18 @@ class _ChatPageState extends State<ChatPage> {
               : 'Enter Valid value';
         },
         decoration: InputDecoration(
-            fillColor: Color.fromRGBO(30, 29, 37, 1.0),
-            filled: true,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10.0),
-              borderSide: BorderSide.none,
-            ),
-            hintText: "Type a message",
-            hintStyle: TextStyle(
-              color: Colors.white54,
-              fontSize: 14,
-            )),
+          fillColor: Color.fromRGBO(30, 29, 37, 1.0),
+          filled: true,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10.0),
+            borderSide: BorderSide.none,
+          ),
+          hintText: "Type a message",
+          hintStyle: TextStyle(
+            color: Colors.white54,
+            fontSize: 14,
+          ),
+        ),
       ),
     );
   }
@@ -248,7 +253,6 @@ class _ChatPageState extends State<ChatPage> {
       width: _size,
       child: FloatingActionButton(
         onPressed: () {
-
           _pageProvider.sendImageMessage();
         },
         backgroundColor: Color.fromRGBO(0, 82, 218, 1.0),

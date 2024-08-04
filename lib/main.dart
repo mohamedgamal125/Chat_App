@@ -40,6 +40,7 @@ class MainApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: "Chatify",
         theme: ThemeData(
+          useMaterial3: false,
           backgroundColor: Color.fromRGBO(36, 35, 49, 1.0),
           scaffoldBackgroundColor: Color.fromRGBO(36, 35, 49, 1.0),
           bottomNavigationBarTheme: BottomNavigationBarThemeData(

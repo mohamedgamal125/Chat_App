@@ -39,6 +39,7 @@ class _SplashPageState extends State<SplashPage> {
       debugShowCheckedModeBanner: false,
       title: "Chatify",
       theme: ThemeData(
+
         backgroundColor: Color.fromRGBO(36, 35, 49, 1.0),
         scaffoldBackgroundColor: Color.fromRGBO(36, 35, 49, 1.0),
       ),
